@@ -1,0 +1,50 @@
+import pandas as pd
+df = pd.read_excel('C:\\Users\\1787912\\Desktop\\sc_req_item.xlsx')  
+
+columnList = []
+
+for col in df.columns:
+    columnList.append(col)
+
+descriptionList = []
+#print(columnList)
+for item in range(len(df)):
+    descriptionList.append(df.loc[item,'Description'])
+
+resultList = []
+checkListDict = {'refresh' : 'DB Refresh',
+             'export' : 'Export',
+             'Modify Account' :'User Mgmt',
+             'Create Account' : 'User Mgmt',
+             'point':'DB Connection',
+             'connection':'DB Connection',
+             'access':'User Mgmt'}
+checkList =  checkListDict.keys()
+
+outputList = []
+x = df.assign(bucketList='NAN')
+def outputFunction(checkList):
+    
+    for checkObject in checkList:
+        for item in range(len(descriptionList)):
+            if checkObject in descriptionList[item]:
+                resultList.append(item)
+                if x.at[item,'bucketList']=='NAN':
+                    x.at[item,'bucketList'] = checkListDict[checkObject]
+                else:
+                    print(x.at[item,'bucketList']+' ,'+ checkListDict[checkObject])
+                    x.at[item,'bucketList'] =x.at[item,'bucketList']+' ,'+ checkListDict[checkObject] 
+
+outputFunction(checkList)
+
+for item in resultList:
+    outputList.append(df.iloc[[item]])
+
+#print(len(set(resultList)))
+resultList.sort()
+#x.at[2,'bucketList']=40
+
+#concatOutput = pd.concat(outputList)
+
+x.to_csv('C:\\Users\\1787912\\Desktop\\demo.csv',
+                    index=False, mode='a', header=True)
